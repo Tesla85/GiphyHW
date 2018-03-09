@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+
+    <div class="buttons">
+       
+    </div>
+    <div class="items-view"></div>
+    
+    <br>
+    <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-6"></div>
+                <div class="col-md-4">
+                    <div>Add Gif Item:</div>
+                        <br>
+                        <input class="form-control mr-sm-2 searchTerm item-input" type="text" placeholder="Search" aria-label="Search">
+                        <br>
+                        <button class="btn btn-secondary btn-lg search add-item" type="submit">Add Gif Button: </button>
+                </div>
+            </div>
+    </div>
+    
+    <div class="gifs-populate-here"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+ 
+    var items = [];
+
+        function renderButtons() {
+
+            // Delete the content inside the movies-view div prior to adding new movies
+            // (this is necessary otherwise you will have repeat buttons)
+            $(".items-view").empty();
+
+
+            // Loop through the array of movies, then generate buttons for each movie in the array
+            for (var i= 0; i <items.length; i++) {
+                var a = $("<button>");
+                a.addClass("item");
+                a.attr("data-name", items[i]);
+                a.text(items[i]);
+                $(".items-view").append(a);
+                }
+            }
+
+
+            $(".add-item").on("click", function(event) {
+
+
+             event.preventDefault();
+
+
+            var item = $(".item-input").val().trim();
+
+            items.push(item);
+
+            renderButtons();
+            });
+        
+           $("button").on("click", function() {
+                var gifItem = $(this).attr("data-gifItem")
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + gifItem + "&api_key=dc6zaTOxFJmzC&limit=10";
+            
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                .then(function(response) {
+                var results = response.data;
+
+                for (var i = 0; i < results.length; i++) {
+                    var gifDiv = $("<div class='item'>");
+
+                    var rating = results[i].rating;
+
+                    var p = $("<p>").text("Rating: " + rating);
+
+                    var itemImage = $("<img>");
+
+            itemImage.attr("src", results[i].images.fixed_height.url);
+            gifDiv.prepend(p);
+            gifDiv.prepend(itemImage);
+
+            $("#gifs-appear-here").prepend(gifDiv);
+          }
+        });
+
+            renderButtons();
+     });
+
+
+    </script>
+
+
+</body>
+</html>
